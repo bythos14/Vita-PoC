@@ -4,8 +4,8 @@
  */
 
 
-#ifndef _DOLCESDK_PSP2_TRIGGER_UTIL_H_
-#define _DOLCESDK_PSP2_TRIGGER_UTIL_H_
+#ifndef _PSP2_TRIGGER_UTIL_H_
+#define _PSP2_TRIGGER_UTIL_H_
 
 #include <psp2/kernel/clib.h>
 #include <psp2/rtc.h>
@@ -15,8 +15,14 @@
 extern "C" {
 #endif
 
-// NOTE1: Last two params in all of the functions are never used, probably callbacks since all sceTriggerUtil functions are non-blocking
-// NOTE2: Max number of events (eventId) per application is 6
+/**
+ * @note Last two params in all of the functions are never used, 
+ * 		 probably callbacks since all sceTriggerUtil functions are non-blocking
+ */
+
+/**
+ * @note Max number of events (eventId) per application is 6
+ */
 
 #define SCE_TRIGGER_UTIL_VERSION						0x3200000
 
@@ -24,24 +30,26 @@ extern "C" {
  * Days of the week for use in repeatDays member of ::SceTriggerUtilEventParamDaily
  */
 typedef enum SceTriggerUtilDays {
-	SCE_TRIGGER_UTIL_SUNDAY = 0x1,
-	SCE_TRIGGER_UTIL_MONDAY = 0x2,
-	SCE_TRIGGER_UTIL_TUESDAY = 0x4,
-	SCE_TRIGGER_UTIL_WEDNESDAY = 0x8,
-	SCE_TRIGGER_UTIL_THURSDAY = 0x10,
-	SCE_TRIGGER_UTIL_FRIDAY = 0x20,
-	SCE_TRIGGER_UTIL_SATURDAY = 0x40,
+	SCE_TRIGGER_UTIL_SUNDAY     = 0x1,
+	SCE_TRIGGER_UTIL_MONDAY     = 0x2,
+	SCE_TRIGGER_UTIL_TUESDAY    = 0x4,
+	SCE_TRIGGER_UTIL_WEDNESDAY  = 0x8,
+	SCE_TRIGGER_UTIL_THURSDAY   = 0x10,
+	SCE_TRIGGER_UTIL_FRIDAY     = 0x20,
+	SCE_TRIGGER_UTIL_SATURDAY   = 0x40,
 } SceTriggerUtilDays;
 
 /**
- * Errors
+ * Error Codes
  */
-#define SCE_TRIGGER_UTIL_ERROR_BUSY                       0x80103600
-#define SCE_TRIGGER_UTIL_ERROR_NOT_FOUND_USER             0x80103611
-#define SCE_TRIGGER_UTIL_ERROR_NOT_FOUND_SYSTEM           0x80103614
-#define SCE_TRIGGER_UTIL_ERROR_NOT_REGISTERED             0x80103621
-#define SCE_TRIGGER_UTIL_ERROR_EVENT_TYPE_MISMATCH        0x80103624
-#define SCE_TRIGGER_UTIL_ERROR_INVALID_ARG                0x80103660
+typedef enum SceTriggerUtilErrorCode {
+    SCE_TRIGGER_UTIL_ERROR_BUSY                     = 0x80103600,
+    SCE_TRIGGER_UTIL_ERROR_NOT_FOUND_USER           = 0x80103611,
+    SCE_TRIGGER_UTIL_ERROR_NOT_FOUND_SYSTEM         = 0x80103614,
+    SCE_TRIGGER_UTIL_ERROR_NOT_REGISTERED           = 0x80103621,
+    SCE_TRIGGER_UTIL_ERROR_EVENT_TYPE_MISMATCH      = 0x80103624,
+    SCE_TRIGGER_UTIL_ERROR_INVALID_ARG              = 0x80103660
+};
 
 typedef struct SceTriggerUtilEventParamDaily { // size is 0x50
 	SceUInt32 ver;
@@ -203,4 +211,4 @@ int sceTriggerUtilGetRegisteredSystemTitleIdList(char* buffer, int numOfIds); //
 }
 #endif /* __cplusplus */
 
-#endif /* _DOLCESDK_PSP2_TRIGGER_UTIL_H_ */
+#endif /* _PSP2_TRIGGERUTIL_H_ */

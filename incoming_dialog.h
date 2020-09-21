@@ -9,7 +9,7 @@
 
 #include <psp2/kernel/clib.h>
 #include <psp2/types.h>
-#include <psp2/scebase.h>
+#include <psp2/defs.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,23 +29,25 @@ typedef enum SceIncomingDialogStatus {
 } SceIncomingDialogStatus;
 
 /**
- * Errors
+ * Error Codes
  */
-#define SCE_INCOMINGDIALOG_ERROR_INVALID_ARG               0x80106201;
+typedef enum SceIncomingDialogErrorCodes {
+    SCE_INCOMINGDIALOG_ERROR_INVALID_ARG = 0x80106201
+};
 
 typedef struct SceIncomingDialogParam {
 	SceInt32 sdkVersion;
-	SceChar8 audioPath[0x80];		//Path to audio file that will be played during dialog, .mp3, .at9, m4a. Can be NULL
-	SceChar8 titleid[0x10];			//TitleId of the application to open when "accept" button has been pressed. Can be NULL
-	SceInt32 unk_BC;			//Can be set to 0
-	SceUInt32 dialogTimer;			//Time to show dialog in seconds
+	SceChar8 audioPath[0x80];           //Path to audio file that will be played during dialog, .mp3, .at9, m4a. Can be NULL
+	SceChar8 titleid[0x10];             //TitleId of the application to open when "accept" button has been pressed. Can be NULL
+	SceInt32 unk_BC;                    //Can be set to 0
+	SceUInt32 dialogTimer;              //Time to show dialog in seconds
 	SceChar8 reserved1[0x3E];
-	SceWChar16 buttonRightText[0x1F];	//Text for "accept" button
-	SceInt16 separator0;			//must be 0
-	SceWChar16 buttonLeftText[0x1F];	//Text for "reject" button. If NULL, only "accept" button will be created
-	SceInt16 separator1;			//must be 0
-	SceWChar16 dialogText[0x80];		//Text for dialog window, also shared with notification
-	SceInt16 separator2;			//must be 0
+	SceWChar16 buttonRightText[0x1F];   //Text for "accept" button
+	SceInt16 separator0;                //must be 0
+	SceWChar16 buttonLeftText[0x1F];    //Text for "reject" button. If NULL, only "accept" button will be created
+	SceInt16 separator1;                //must be 0
+	SceWChar16 dialogText[0x80];        //Text for dialog window, also shared with notification
+	SceInt16 separator2;                //must be 0
 } SceIncomingDialogParam;
 
 /**
@@ -82,11 +84,11 @@ static inline
 void sceIncomingDialogParamInit(SceIncomingDialogParam* dialogParam)
 {
 	sceClibMemset(dialogParam, 0x0, sizeof(SceIncomingDialogParam));
-	dialogParam->sdkVersion = SCE_PSP2_SDK_VERSION;
+	dialogParam->sdkVersion = PSP2_SDK_VERSION;
 }
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* _DOLCESDK_PSP2_INCOMINGDIALOG_H_ */
+#endif /* _PSP2_INCOMING_DIALOG_H_ */

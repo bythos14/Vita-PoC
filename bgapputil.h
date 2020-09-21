@@ -4,17 +4,19 @@
  */
 
 
-#ifndef _DOLCESDK_PSP2_BGAPP_UTIL_H_
-#define _DOLCESDK_PSP2_BGAPP_UTIL_H_
+#ifndef _PSP2_BGAPP_UTIL_H_
+#define _PSP2_BGAPP_UTIL_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * Errors
+ * Error Codes
  */
-#define SCE_BGAPP_UTIL_ERROR_INVALID_ARG                       0x80106502
+typedef enum SceBgAppUtilErrorCode {
+    SCE_BGAPP_UTIL_ERROR_INVALID_ARG = 0x80106502
+};
 
 /**
  * Start BG application (eboot2.bin)
@@ -29,4 +31,4 @@ int sceBgAppUtilStartBgApp(int mode);
 }
 #endif /* __cplusplus */
 
-#endif /* _DOLCESDK_PSP2_BGAPP_UTIL_H_ */
+#endif /* _PSP2_BGAPPUTIL_H_ */

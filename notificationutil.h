@@ -3,9 +3,8 @@
  * \usage{psp2/notificationutil.h,SceNotificationUtil_stub,SCE_SYSMODULE_NOTIFICATION_UTIL}
  */
 
-
-#ifndef _DOLCESDK_PSP2_NOTIFICATIONUTIL_H_
-#define _DOLCESDK_PSP2_NOTIFICATIONUTIL_H_
+#ifndef _PSP2_NOTIFICATIONUTIL_H_
+#define _PSP2_NOTIFICATIONUTIL_H_
 
 #include <psp2/types.h>
 
@@ -14,9 +13,11 @@ extern "C" {
 #endif
 
 /**
- * Errors
+ * Error Codes
  */
-#define SCE_NOTIFICATIONUTIL_ERROR_INTERNAL               0x80106300;
+typedef enum SceNotificationUitlErrorCode {
+	SCE_NOTIFICATIONUTIL_ERROR_INTERNAL = 0x80106300
+};
 
 /**
  * BGDL-type notification event handler function
@@ -88,4 +89,4 @@ SceInt32 sceNotificationUtilProgressFinish(SceNotificationUtilProgressFinishPara
 }
 #endif /* __cplusplus */
 
-#endif /* _DOLCESDK_PSP2_NOTIFICATIONUTIL_H_ */
+#endif /* _PSP2_NOTIFICATIONUTIL_H_ */

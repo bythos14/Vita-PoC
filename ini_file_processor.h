@@ -3,39 +3,26 @@
  * \usage{psp2/ini_file_processor.h,SceIniFileProcessor_stub,SCE_SYSMODULE_INTERNAL_INI_FILE_PROCESSOR}
  */
 
-#ifndef _DOLCESDK_PSP2_INI_FILE_PROCESSOR_H_
-#define _DOLCESDK_PSP2_INI_FILE_PROCESSOR_H_
+#ifndef _PSP2_INI_FILE_PROCESSOR_H_
+#define _PSP2_INI_FILE_PROCESSOR_H_
 
 #include <psp2/types.h>
 
-#ifdef __cplusplus
+#ifndef __cplusplus
 extern "C" {
 #endif
 
 /**
- * Errors
+ * Error Codes
  */
-#define SCE_INI_FILE_PROCESSOR_ERROR_MODE              0x80840001
-#define SCE_INI_FILE_PROCESSOR_ERROR_EOF               0x80840004
-#define SCE_INI_FILE_PROCESSOR_ERROR_KEY_NOT_FOUND     0x80840011
+typedef enum SceIniFileProcessorErrorCode {
+	SCE_INI_FILE_PROCESSOR_ERROR_MODE 			= 0x80840001
+	SCE_INI_FILE_PROCESSOR_ERROR_EOF            = 0x80840004
+	SCE_INI_FILE_PROCESSOR_ERROR_KEY_NOT_FOUND  = 0x80840011
+};
 
-#define SCE_INI_FILE_PROCESSOR_PARSE_COMPLETED         0x00840002
+#define SCE_INI_FILE_PROCESSOR_PARSE_COMPLETED    0x00840002
 
-typedef void*(*SceIniFileProcessorAllocFunc)(SceSize size);
-
-typedef void(*SceIniFileProcessorFreeFunc)(void* ptr);
-
-typedef struct SceIniFileProcessorMemCallbacks {
-	SceIniFileProcessorAllocFunc allocFunc;
-	SceIniFileProcessorFreeFunc freeFunc;
-} SceIniFileProcessorMemCallbacks;
-
-typedef struct SceIniFileProcessorParam {
-	int a1; //size or mode? usually 0, seen: 0x1000, 0x2000
-	int a2; //size or mode? usually 0, seen: 0x1000, 0x2000
-	SceIniFileProcessorMemCallbacks* pMemCallbacks; //can be NULL
-	int a4;
-} SceIniFileProcessorParam;
 
 /**
  * Initialize INI file processor library
@@ -294,46 +281,125 @@ void sceIniFileProcessorFinalize(void* context)
 	sceIniFileProcessorDestroyContext1(context);
 }
 
-/**
- * Initialize INI file processor library
- *
- * @param[in] context - context buffer, size must be 6
- *
- */
-inline
-void* sceIniFileProcessorCreateContext(void* context)
-{
-	return sceIniFileProcessorCreateContext1(context);
-}
-
-/**
- * Initialize INI file processor param struct
- *
- * @param[in] param - ::SceIniFileProcessorParam to initialize
- *
- */
-inline
-void sceIniFileProcessorInitializeParam(SceIniFileProcessorParam* param)
-{
-	sceIniFileProcessorInitializeParam1(param);
-}
-
-/**
- * Destroy context
- *
- * @param[in] context - context buffer
- *
- * @return 0 on success, < 0 on error.
- *
- */
-inline
-void sceIniFileProcessorDestroyContext(void* context)
-{
-	sceIniFileProcessorDestroyContext1(context);
-}
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* _DOLCESDK_PSP2_INI_FILE_PROCESSOR_H_ */
+#ifdef __cplusplus
+
+namespace sce
+{
+
+namespace Ini
+{
+
+class MemAllocator
+{
+public:
+	MemAllocator() = default;
+
+	typedef void*(*AllocateFunction)(SceSize size);
+	typedef void(*FreeFunction)(void* ptr);
+
+	AllocateFunction allocateMemory;
+	FreeFunction freeMemory;
+};
+
+class InitParameter
+{
+public:
+	InitParameter();
+
+	int unk_0x0; // Size or mode? Usually 0, seen: 0x1000, 0x2000
+	int unk_0x4; // Size or mode? Usually 0, seen: 0x1000, 0x2000
+	MemAllocator* allocator; // Can be NULL
+	int unk_c;
+};
+
+class IniProcessor
+{
+public:
+	IniParser();
+	~IniParser();
+
+	/**
+	 * Initialise the library.
+	 *
+	 * @param[in] initParams - Initialisation parameters for the library.
+	 *
+	 * @return  0 on success, <0 on error.
+	 */
+	int initialize(InitParameter *initParams);
+	/**
+	 * Terminate the library
+	 *
+	 * @return  0 on success, <0 on error.
+	 */
+	int terminate();
+
+	/**
+	 * Parse INI data from memory
+	 *
+	 * @param[in] buf  - Character buffer of INI data.
+	 * @param[in] size - Size of the INI data.
+	 *
+	 * @return 0 on success, < 0 on error.
+	 */
+	int parse(char* buf, SceSize size); // SceIniFileProcessor_B785FE67
+	/**
+	 * Parse INI data from a file.
+	 *
+	 * @param[in] filePath - Path to the INI file to open.
+	 * @param[in] mode     - file open mode
+	 * @param[in] unk      - Unknown, set to 0 by default.
+	 *
+	 * @return 0 on success, < 0 on error.
+	 */
+	int parse(const char* filePath, const char* mode, int unk = 0); // SceIniFileProcessor_51B791E8
+
+	/**
+	 * Get file contents memory pointer
+	 *
+	 * @param[out] pMem - pointer to the memory block base where file contents are stored
+	 * @param[out] outMemSize - size of the memory block
+	 *
+	 * @return 0 on success, < 0 on error.
+	 */
+	int getInternalFileMemory(void** pMem, SceSize outMemSize);
+
+	/**
+	 * Create new INI file and open it. If the file is already present,
+	 * it will be overwritten.
+	 *
+	 * @param[in] filePath - Path to the INI file to open.
+	 * @param[in] mode     - file open mode
+	 * @param[in] unk      - Unknown, set to 0 by default.
+	 *
+	 * @return 0 on success, < 0 on error.
+	 */
+	int createFile(const char* filePath, const char* mode, int unk = 0);
+	/**
+	 * Close the currently open file.
+	 * 
+	 * @return 0 on success, <0 on error.
+	 */
+	int closeFile();
+	/**
+	 * Reset the INI parser to the start of the data.
+	 * 
+	 * @return 0 on success, <0 on error.
+	 */
+	int reset();
+
+
+private:
+	char context[6];
+	char padding[2];
+};
+
+}; /* namespace Ini */
+}; /* namespace sce */
+
+#endif /* __cplusplus */
+
+#endif /* _PSP2_INI_FILE_PROCESSOR_H_ */
